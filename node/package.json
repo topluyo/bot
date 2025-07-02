@@ -1,0 +1,17 @@
+{
+  "name": "topluyo-node-bot",
+  "private": true,
+  "description": "A sample Topluyo Bot app using Express",
+  "engines": {
+    "node": "18.x || 20.x || 22.x"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "crypto": "1.0.1",
+    "express": "4.21.2"
+  },
+  "license": "MIT"
+}
