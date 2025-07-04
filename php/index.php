@@ -47,6 +47,7 @@ function api($url, $token, $data) {
 
 
 
+
 if($_REQUEST["webhook"]){
   $income  = decrypt($_REQUEST["webhook"],$APPLICATION_KEY);
   $webhook = json_decode( $income , true );
@@ -57,11 +58,11 @@ if($_REQUEST["webhook"]){
   
   if($action=="post/add"){
     $user    = $data['user'];
-    $message = $data['message'];
+    $post    = $data['post'];
     $channel = $data['channel'];
     $group   = $data['group'];
 
-    if($message=="!selam"){
+    if($post =="!selam"){
       $text = "selam " . $user;
       $response = api("https://topluyo.com/!api/post/add/".$group."/".$channel,$CLIENT_KEY,[
         "text" => $text
@@ -69,7 +70,7 @@ if($_REQUEST["webhook"]){
       exit();
     }
 
-    if($message=="!naber"){
+    if($post =="!naber"){
       $text = "iyidir " . $user . ' kanka senden naber =)';
       $response = api("https://topluyo.com/!api/post/add/".$group."/".$channel,$CLIENT_KEY,[
         "text" => $text
@@ -78,3 +79,5 @@ if($_REQUEST["webhook"]){
     }
   }
 }
+
+
