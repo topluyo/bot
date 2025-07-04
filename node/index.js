@@ -95,23 +95,25 @@ app.all('/', async (req, res) => {
     return res.status(400).send('Invalid JSON inside webhook');
   }
 
-  const { action, user, message, channel, group } = webhook;
+  
+  const { action, data } = webhook;
 
   if (action === 'post/add') {
     let text = null;
-
-    if (message === '!selam') {
-      text = `selam ${user}`;
-    } else if (message === '!naber') {
-      text = `iyidir ${user} kanka senden naber =)`;
+    
+    if (data.message === '!selam') {
+      text = `selam ${data.user}`;
+    } else if (data.message === '!naber') {
+      text = `iyidir ${data.user} kanka senden naber =)`;
     }
 
     if (text) {
-      const url = `https://topluyo.com/!api/post/add/${group}/${channel}`;
+      const url = `https://topluyo.com/!api/post/add/${data.group}/${data.channel}`;
       const response = await api(url, CLIENT_KEY, { text });
       return res.json(response);
     }
   }
+
 
   res.send('OK');
 });
