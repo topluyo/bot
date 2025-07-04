@@ -62,7 +62,7 @@ if($_REQUEST["webhook"]){
     $group   = $data['group'];
 
     if($message=="!selam"){
-      $text = "selam " . $webhook['user'];
+      $text = "selam " . $user;
       $response = api("https://topluyo.com/!api/post/add/".$group."/".$channel,$CLIENT_KEY,[
         "text" => $text
       ]);
@@ -70,7 +70,7 @@ if($_REQUEST["webhook"]){
     }
 
     if($message=="!naber"){
-      $text = "iyidir " . $webhook['user'] . ' kanka senden naber =)';
+      $text = "iyidir " . $user . ' kanka senden naber =)';
       $response = api("https://topluyo.com/!api/post/add/".$group."/".$channel,$CLIENT_KEY,[
         "text" => $text
       ]);
