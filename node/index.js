@@ -38,45 +38,17 @@ function decrypt(data, password) {
 }
 
 
-function api(url, token, data) {
-  return new Promise((resolve, reject) => {
-    const parsedUrl = new URL(url);
-    const postData = JSON.stringify(data);
 
-    const options = {
-      hostname: parsedUrl.hostname,
-      port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
-      path: parsedUrl.pathname + parsedUrl.search,
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
-      }
-    };
-
-    const lib = parsedUrl.protocol === 'https:' ? https : http;
-
-    const req = lib.request(options, (res) => {
-      let responseData = '';
-      res.on('data', chunk => { responseData += chunk; });
-      res.on('end', () => {
-        try {
-          const parsed = JSON.parse(responseData);
-          resolve(parsed);
-        } catch (e) {
-          resolve({ error: 'Invalid JSON response', raw: responseData });
-        }
-      });
-    });
-
-    req.on('error', (err) => {
-      resolve({ error: err.message });
-    });
-
-    req.write(postData);
-    req.end();
-  });
+function api(url,token,body){
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'User-Agent': 'undici-stream-example',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(body).toString()
+  }).then(res => res.text()) 
 }
 
 
@@ -95,15 +67,15 @@ app.all('/', async (req, res) => {
     return res.status(400).send('Invalid JSON inside webhook');
   }
 
-  
+
   const { action, data } = webhook;
 
   if (action === 'post/add') {
     let text = null;
     
-    if (data.message === '!selam') {
+    if (data.post === '!selam') {
       text = `selam ${data.user}`;
-    } else if (data.message === '!naber') {
+    } else if (data.post === '!naber') {
       text = `iyidir ${data.user} kanka senden naber =)`;
     }
 
@@ -114,11 +86,16 @@ app.all('/', async (req, res) => {
     }
   }
 
-
   res.send('OK');
 });
 
+
+// listen for requests :)
+const listener = app.listen(process.env.PORT, function() {
+  console.log("Your app is listening on port " + listener.address().port);
+});
+
 // --- Start server ---
-server.listen(PORT, e => {
-  console.log("Sunucu Çalıştı", PORT)
-})
+// server.listen(PORT, e => {
+//   console.log("Sunucu Çalıştı", PORT)
+// })
