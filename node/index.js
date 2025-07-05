@@ -1,4 +1,4 @@
-const PORT = process.env.PORT || 5002
+const PORT = process.env.PORT || 1453
 const http = require('http');
 const https = require('https');
 const { URL } = require('url');
@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 
-// This file must be under market.topluyo.com/ > App > webhook parameter
+// This file must be under market.topluyo.com/ > App > API
 APPLICATION_KEY = "XXXXXXXXXXX x32 length";             // APPLICATION KEY from, market.topluyo.com
 CLIENT_KEY      = "XXXXXXXXXXXXXXXXXXXXXX x64 length";  // CLIENT KEY from topluyo.com > Profile > Settings (Ayarlar) > Devices (Cihazlaar)
 
@@ -38,17 +38,45 @@ function decrypt(data, password) {
 }
 
 
+function api(url, token, data) {
+  return new Promise((resolve, reject) => {
+    const parsedUrl = new URL(url);
+    const postData = JSON.stringify(data);
 
-function api(url,token,body){
-  return fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'User-Agent': 'undici-stream-example',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams(body).toString()
-  }).then(res => res.text()) 
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
+      path: parsedUrl.pathname + parsedUrl.search,
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData)
+      }
+    };
+
+    const lib = parsedUrl.protocol === 'https:' ? https : http;
+
+    const req = lib.request(options, (res) => {
+      let responseData = '';
+      res.on('data', chunk => { responseData += chunk; });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(responseData);
+          resolve(parsed);
+        } catch (e) {
+          resolve({ error: 'Invalid JSON response', raw: responseData });
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      resolve({ error: err.message });
+    });
+
+    req.write(postData);
+    req.end();
+  });
 }
 
 
@@ -66,7 +94,6 @@ app.all('/', async (req, res) => {
   } catch {
     return res.status(400).send('Invalid JSON inside webhook');
   }
-
 
   const { action, data } = webhook;
 
@@ -94,8 +121,3 @@ app.all('/', async (req, res) => {
 const listener = app.listen(process.env.PORT, function() {
   console.log("Your app is listening on port " + listener.address().port);
 });
-
-// --- Start server ---
-// server.listen(PORT, e => {
-//   console.log("Sunucu Çalıştı", PORT)
-// })
