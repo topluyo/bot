@@ -77,6 +77,15 @@ if($_REQUEST["webhook"]){
       ]);
       exit();
     }
+    
+    if($post == "!as bayrakları"){
+      $text = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/960px-Flag_of_Turkey.svg.png";
+      $response = api("https://topluyo.com/!api/post/add/".$group."/".$channel,$CLIENT_KEY,[
+        "text" => $text
+      ]);
+      exit();
+    }
+    
   }
 }
 
