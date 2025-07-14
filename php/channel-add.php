@@ -1,6 +1,11 @@
 <?php 
 
 
+// This file must be under market.topluyo.com/ > App > webhook parameter
+$APPLICATION_KEY = "XXXXXXXXXXX x32 length";             // APPLICATION KEY from, market.topluyo.com
+$CLIENT_KEY      = "XXXXXXXXXXXXXXXXXXXXXX x64 length";  // CLIENT KEY from topluyo.com > Profile > Settings (Ayarlar) > Devices (Cihazlaar)
+
+
 
 function decrypt($encryptedData, $password) {
   $method = 'aes-256-cbc';
