@@ -65,7 +65,7 @@ if($_REQUEST["webhook"]){
     $is_owner = $data['is_owner'];
     
     if($post == "!kur"){
-      $response = api("https://alfa.topluyo.com/!control/!api/channel/add/".$group,$CLIENT_KEY,[]);
+      $response = api("https://topluyo.com/!control/!api/channel/add/".$group,$CLIENT_KEY,[]);
       
       if(0 && $is_owner==0){
         api("https://topluyo.com/!api/post/add/".$group."/".$channel,$CLIENT_KEY,[
